@@ -4,25 +4,28 @@ declare global {
   namespace jest {
     interface Matchers<R> {
       // add any of your custom matchers here
-      toBeDivisibleBy: (argument: number) => {};
+      toCustomEqual: (argument: number) => {};
     }
   }
 }
 
 // this will extend the expect with a custom matcher
 expect.extend({
-  toBeDivisibleBy(received: number, argument: number) {
-    const pass = received % argument === 0;
-    if (pass) {
+  toCustomEqual(received: number, argument: number) {
+
+    received += 1;
+
+    try {
+      expect(received).toEqual(argument);
       return {
-        message: () => `expected ${received} not to be divisible by ${argument}`,
+        message: () => `expected ${received} not to eq ${argument}`,
         pass: true
-      };
-    } else {
+      }
+    } catch(ex) {
       return {
-        message: () => `expected ${received} to be divisible by ${argument}`,
+        message: ex.matcherResult.message,
         pass: false
-      };
+      }
     }
   }
 });
